@@ -54,7 +54,7 @@ ROOT_URLCONF = 'auth_jwt.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -126,7 +126,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'authentication.User'
 
-
 REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'auth_jwt.exceptions.core_exception_handler',
     'NON_FIELD_ERRORS_KEY': 'error',
@@ -134,3 +133,10 @@ REST_FRAMEWORK = {
         'authentication.backends.JWTAuthentication',
     ),
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')

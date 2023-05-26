@@ -12,6 +12,7 @@ services:
       - 8000:8000
     env_file:
       - db_keys_for_local.txt
+      - secret.txt
     #    depends_on:
     #      - db
     command: bash -c "python manage.py makemigrations && python manage.py makemigrations authentication && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
