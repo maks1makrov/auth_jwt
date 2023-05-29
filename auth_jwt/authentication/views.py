@@ -6,7 +6,7 @@ from django.core.mail import EmailMessage
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
-from django.utils.encoding import force_bytes, force_str, smart_bytes
+from django.utils.encoding import force_bytes, force_str, smart_bytes, smart_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views import View
 from rest_framework import status, generics
@@ -18,7 +18,8 @@ from rest_framework.views import APIView
 from .forms import CustomResetPSWForm
 from .models import User
 from .renderers import UserJSONRenderer
-from .serializers import RegistrationSerializer, LoginSerializer, UserSerializer, ResetPasswordEmailRequestSerializer
+from .serializers import RegistrationSerializer, LoginSerializer, UserSerializer, ResetPasswordEmailRequestSerializer, \
+    SetNewPasswordSerializer
 from .token_for_activate import account_activation_token
 
 
@@ -140,25 +141,16 @@ def resetget(request, uidb64, token):
     else:
         return HttpResponse('Activation link is invalid!')
 
-# class ResetView(View):
-    # def get(self, request, uidb64, token):
-    #     try:
-    #         email = force_str(urlsafe_base64_decode(uidb64))
-    #         user = User.objects.get(email=email)
-    #     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
-    #         user = None
-    #     if user is not None and account_activation_token.check_token(user, token):
-    #         form = CustomResetPSWForm()
-    #         return render(request, "reset.html", {"form": form})
-    #     else:
-    #         return HttpResponse('Activation link is invalid!')
 
 def reset(request):
-    form = CustomResetPSWForm(data=request.POST)
-    if form.is_valid():
-        psw = form.password
-        user = User.objects.get(email=form.email)
-        user.set_password(psw)
-        return HttpResponse('success for reset password')
-    messages.error(request, "error")
-    return HttpResponse('error for reset password')
+    try:
+        form = CustomResetPSWForm(data=request.POST)
+        psw = form.data['password']
+        psw2 = form.data['password_2']
+        if form.is_valid() and psw == psw2:
+            user = User.objects.get(email=form.data['email'])
+            user.set_password(psw)
+            return HttpResponse('success for reset password')
+    except Exception as ex:
+        messages.error(request, "error")
+        return HttpResponse('error for reset password', ex)

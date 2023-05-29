@@ -1,6 +1,7 @@
 from django.urls import path
 
-from .views import RegistrationAPIView, LoginAPIView, UserRetrieveUpdateAPIView, activate, RequestPasswordResetEmail, resetget, reset
+from .views import RegistrationAPIView, LoginAPIView, UserRetrieveUpdateAPIView, activate, RequestPasswordResetEmail, \
+    resetget, reset
 
 app_name = 'authentication'
 urlpatterns = [
@@ -13,7 +14,6 @@ urlpatterns = [
          activate, name='activate'),
     path('resetget/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/', resetget,
          name='resetget'),
-    path('reset/',
-         reset, name='reset'),
+    path('reset/', reset, name='reset'),
 
 ]
